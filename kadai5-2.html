@@ -14,6 +14,18 @@
     <script>
         async function some_api(myForm) {
             // ここにコードを書く
+            const place = myForm.form_data.value;
+            const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(place)}&count=1`);
+            const geoData = await geoRes.json();
+
+            if (!geoData.results || geoData.results.length === 0) {
+                document.getElementById("result").innerHTML += `場所が見つかりませんでした: ${place}<br />`;
+            } else {
+                const { name, latitude, longitude } = geoData.results[0];
+                document.getElementById("result").innerHTML += `
+                    地名: ${name}<br />
+                    緯度: ${latitude}, 経度: ${longitude}<br />`;
+            }
             document.getElementById("result").innerHTML += myForm.form_data.value+"<br />";
             document.apiform.reset();
         }
